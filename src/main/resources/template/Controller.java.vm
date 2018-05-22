@@ -24,7 +24,7 @@ import java.util.Map;
 @RequestMapping("${pathName}")
 public class ${className}Controller {
     @Autowired
-    private ${className}Service ${className}Service;
+    private ${className}Service ${lowClassName}Service;
 
     /**
      * 列表
@@ -34,7 +34,7 @@ public class ${className}Controller {
     public Result list(@RequestParam Map<String, Object> params) {
         //查询列表数据
         PageInfo<${className}Entity> pageInfo = PageHelper.startPage(MapUtils.getInteger(params, "page"),
-                MapUtils.getInteger(params, "limit")).doSelectPageInfo(() -> ${className}Service.queryList(params));
+                MapUtils.getInteger(params, "limit")).doSelectPageInfo(() -> ${lowClassName}Service.queryList(params));
         return Result.ok().put("page", pageInfo);
     }
 
@@ -45,9 +45,9 @@ public class ${className}Controller {
     @RequestMapping("/info/{${pk.lowAttrName}}")
     @RequiresPermissions("${pathName}:info")
     public Result info(@PathVariable("${pk.lowAttrName}") ${pk.attrType} ${pk.lowAttrName}) {
-            ${className}Entity ${className} = ${className}Service.queryObject(${pk.lowAttrName});
+            ${className}Entity ${lowClassName} = ${className}Service.queryObject(${pk.lowAttrName});
 
-        return Result.ok().put("${lowClassName}", ${className});
+        return Result.ok().put("${lowClassName}", ${lowClassName});
     }
 
     /**
@@ -55,9 +55,9 @@ public class ${className}Controller {
      */
     @RequestMapping("/save")
     @RequiresPermissions("${pathName}:save")
-    public Result save(@RequestBody ${className}Entity ${className}) {
+    public Result save(@RequestBody ${className}Entity ${lowClassName}) {
         try {
-                ${className}Service.save(${className});
+                ${lowClassName}Service.save(${lowClassName});
         } catch (Exception e) {
             log.error("保存异常", e);
             Result.error("保存异常");
@@ -71,9 +71,9 @@ public class ${className}Controller {
      */
     @RequestMapping("/update")
     @RequiresPermissions("${pathName}:update")
-    public Result update(@RequestBody ${className}Entity ${className}) {
+    public Result update(@RequestBody ${className}Entity ${lowClassName}) {
         try {
-                ${className}Service.update(${className});
+                ${lowClassName}Service.update(${lowClassName});
         } catch (Exception e) {
             log.error("修改异常", e);
             Result.error("修改异常");
@@ -89,9 +89,9 @@ public class ${className}Controller {
     public Result delete(@RequestBody ${pk.attrType}[]${pk.lowAttrName}s) {
         try {
             if (${pk.lowAttrName}s.length == 1) {
-                    ${className}Service.delete(${pk.lowAttrName}s[0]);
+                    ${lowClassName}Service.delete(${pk.lowAttrName}s[0]);
             } else {
-                    ${className}Service.deleteBatch(${pk.lowAttrName}s);
+                    ${lowClassName}Service.deleteBatch(${pk.lowAttrName}s);
             }
         } catch (Exception e) {
             log.error("删除异常", e);

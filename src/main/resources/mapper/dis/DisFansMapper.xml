@@ -43,7 +43,7 @@
         from dis_fans f left join dis_member_info m on f.member_id=m.id
         where f.id = #{id,jdbcType=VARCHAR}
     </select>
-    <select id="selectList" resultType="com.distribution.modules.dis.entity.DisFans">
+    <select id="selectList" resultMap="BaseResultMap">
         select
             f.id, member_id, wechat_id, wechat_img, wechat_nickname,
             m.id as "m_id", dis_platform_id, dis_user_id, dis_model_id, dis_full_index, dis_user_name, dis_level,

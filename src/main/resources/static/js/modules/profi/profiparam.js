@@ -1,20 +1,38 @@
 $(function () {
     $("#jqGrid").jqGrid({
-        url: baseURL + 'cardinfo/list',
+        url: baseURL + 'disprofiparam/list',
         datatype: "json",
         colModel: [
             {label: 'id', name: 'id', index: 'id', width: 50, key: true},
-            {label: '银行代号', name: 'bankNum', index: 'bank_num', width: 80},
-            {label: '信用卡代号', name: 'cardNum', index: 'card_num', width: 80},
-            {label: '信用卡名称', name: 'cardName', index: 'card_name', width: 80},
-            {label: '信用卡图片', name: 'cardImg', index: 'card_img', width: 80},
-            {label: '信用卡详情', name: 'cardInfo', index: 'card_info', width: 80},
+            {label: '平台id', name: 'disPlatformId', index: 'dis_platform_id', width: 80},
             {
-                label: '信用卡办理链接',
-                name: 'cardUrl',
-                index: 'card_url',
+                label: '分润模型',
+                name: 'disProMode',
+                index: 'dis_pro_mode',
                 width: 80,
-                formatter: (value, options, row) => `<a href="#">${value}</a>`
+                formatter: (value, options, row) => value === 0 ?
+                    '百分比' :
+                    '金额'
+            },
+            {
+                label: '分润类别',
+                name: 'disProType',
+                index: 'dis_pro_type',
+                width: 80,
+                formatter: (value, options, row) => value === 0 ?
+                    '交易分润' :
+                    '上下级分润'
+            },
+            {label: '分润值', name: 'disProValue', index: 'dis_pro_value', width: 80},
+            {label: '从下往上对应的级别关系', name: 'disProLevel', index: 'dis_pro_level', width: 80},
+            {
+                label: '会员类型',
+                name: 'disUserType',
+                index: 'dis_user_type',
+                width: 80,
+                formatter: (value, options, row) => value === 0 ?
+                    '<span class="label label-danger">非会员</span>' :
+                    '<span class="label label-success">会员</span>'
             }
         ],
         viewrecords: true,
@@ -47,18 +65,22 @@ $(function () {
 var vm = new Vue({
     el: '#rrapp',
     data: {
+        q: {disProLevel: null},
         showList: true,
         title: null,
-        cardInfo: {}
+        disProfiParam: {}
     },
     methods: {
-        query: function () {
+        query: () => {
             vm.reload();
+        },
+        reset: () => {
+            vm.q.disProLevel = null;
         },
         add: function () {
             vm.showList = false;
             vm.title = "新增";
-            vm.cardInfo = {};
+            vm.disProfiParam = {};
         },
         update: function (event) {
             let id = getSelectedRow();
@@ -71,12 +93,12 @@ var vm = new Vue({
             vm.getInfo(id)
         },
         saveOrUpdate: function (event) {
-            let url = vm.cardInfo.id == null ? "cardinfo/save" : "cardinfo/update";
+            let url = vm.disProfiParam.id == null ? "disprofiparam/save" : "disprofiparam/update";
             $.ajax({
                 type: "POST",
                 url: baseURL + url,
                 contentType: "application/json",
-                data: JSON.stringify(vm.cardInfo),
+                data: JSON.stringify(vm.disProfiParam),
                 success: function (r) {
                     if (r.code === 0) {
                         alert('操作成功', function (index) {
@@ -97,7 +119,7 @@ var vm = new Vue({
             confirm('确定要删除选中的记录？', function () {
                 $.ajax({
                     type: "POST",
-                    url: baseURL + "cardinfo/delete",
+                    url: baseURL + "disprofiparam/delete",
                     contentType: "application/json",
                     data: JSON.stringify(ids),
                     success: function (r) {
@@ -113,14 +135,15 @@ var vm = new Vue({
             });
         },
         getInfo: function (id) {
-            $.get(baseURL + "cardinfo/info/" + id, function (r) {
-                vm.cardInfo = r.cardInfo;
+            $.get(baseURL + "disprofiparam/info/" + id, function (r) {
+                vm.disProfiParam = r.disProfiParam;
             });
         },
         reload: function (event) {
             vm.showList = true;
-            let page = $("#jqGrid").jqGrid('getGridParam', 'page');
+            var page = $("#jqGrid").jqGrid('getGridParam', 'page');
             $("#jqGrid").jqGrid('setGridParam', {
+                postData: {'disProLevel': vm.q.disProLevel},
                 page: page
             }).trigger("reloadGrid");
         }
