@@ -1,0 +1,9 @@
+package rules;
+import com.distribution.modules.api.entity.UserEntity
+rule "test2"
+    when
+        UserEntity(userId>0)
+    then
+        System.out.println("测试通过");
+
+end

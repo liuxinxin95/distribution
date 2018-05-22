@@ -1,0 +1,28 @@
+
+import lombok.Data;
+
+import java.io.Serializable;
+
+${package}.entity;
+#if(${hasBigDecimal})
+#end
+
+
+/**
+ * ${comments}
+ *
+ * @author ${author}
+ * @email ${email}
+ * @date ${datetime}
+ */
+@Data
+public class ${className}Entity implements Serializable {
+    private static final long serialVersionUID = 1L;
+
+    #foreach ($column in $columns)
+        /**
+        * $column.comments
+        */
+        private $column.attrType $column.lowAttrName;
+    #end
+}

@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.distribution.modules.dis.dao.DisMemberInfoDao">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.distribution.modules.dis.entity.DisMemberInfoEntity" id="disMemberInfoMap">
+        <result property="id" column="id"/>
+        <result property="disPlatformId" column="dis_platform_id"/>
+        <result property="disFullIndex" column="dis_full_index"/>
+        <result property="disUserName" column="dis_user_name"/>
+        <result property="disLevel" column="dis_level"/>
+        <result property="disUserType" column="dis_user_type"/>
+        <result property="disNote" column="dis_note"/>
+        <result property="addTime" column="add_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="isDelete" column="is_delete"/>
+        <association property="userEntity" column="dis_user_id"
+                     javaType="com.distribution.modules.api.entity.UserEntity">
+            <id property="user_id" column="u_id"/>
+            <result property="username" column="username"/>
+            <result property="mobile" column="mobile"/>
+        </association>
+        <association property="disMemberParent" column="dis_model_id"
+                     javaType="com.distribution.modules.dis.entity.DisMemberInfoEntity">
+            <id column="p_id" property="id"/>
+            <result property="disUserName" column="p_name"/>
+            <result property="disLevel" column="p_dis_level"/>
+            <result property="disUserType" column="p_dis_user_type"/>
+        </association>
+        <collection property="disMemberChildren" ofType="com.distribution.modules.dis.entity.DisMemberInfoEntity"
+                    javaType="ArrayList">
+            <id column="c_id" property="id"/>
+            <result property="disUserName" column="c_name"/>
+            <result property="disLevel" column="c_dis_level"/>
+            <result property="disUserType" column="c_dis_user_type"/>
+        </collection>
+    </resultMap>
+
+    <select id="queryObject" resultMap="disMemberInfoMap">
+        select
+            m.id,
+            m.dis_platform_id,
+            m.dis_user_id,
+            m.dis_model_id,
+            m.dis_full_index,
+            m.dis_user_name,
+            m.dis_level,
+            m.dis_user_type,
+            m.dis_note,
+            m.add_time,
+            m.update_time,
+            m.is_delete,
+            u.user_id,
+            u.username,
+            u.mobile,
+            p.id            "p_id",
+            p.dis_user_id   "p_user_id",
+            p.dis_user_name "p_name",
+            p.dis_user_type "p_dis_user_type",
+            c.id            "c_id",
+            c.dis_user_id   "c_user_id",
+            c.dis_user_type "c_dis_user_type",
+            c.dis_user_name "c_name"
+        from distribution.dis_member_info m
+            left join distribution.tb_user u on u.user_id = m.dis_user_id
+            left join dis_member_info p on m.dis_model_id = p.id
+            left join dis_member_info c on c.dis_model_id = m.id
+        where m.id = #{value}
+    </select>
+
+    <select id="queryList" resultMap="disMemberInfoMap">
+        select
+        m.id,
+        m.dis_platform_id,
+        m.dis_user_id,
+        m.dis_model_id,
+        m.dis_full_index,
+        m.dis_user_name,
+        m.dis_level,
+        m.dis_user_type,
+        m.dis_note,
+        m.add_time,
+        m.update_time,
+        m.is_delete,
+        u.user_id,
+        u.username,
+        u.mobile,
+        p.id "p_id",
+        p.dis_user_id "p_user_id",
+        p.dis_user_name "p_name",
+        p.dis_user_type "p_dis_user_type",
+        c.id "c_id",
+        c.dis_user_id "c_user_id",
+        c.dis_user_type "c_dis_user_type",
+        c.dis_user_name "c_name"
+        from distribution.dis_member_info m
+        left join distribution.tb_user u on u.user_id = m.dis_user_id
+        left join dis_member_info p on m.dis_model_id = p.id
+        left join dis_member_info c on c.dis_model_id = m.id
+        <where>
+            <if test="disUserName !=null">
+                and m.dis_user_name like concat('%',#{disUserName},'%')
+            </if>
+            <if test="disLevel != null and disLevel !=''">
+                and m.dis_level = #{disLevel}
+            </if>
+            <if test="disUserType != null and disUserType!=''">
+                and m.dis_user_type =#{disUserType}
+            </if>
+            <if test="userId !=null">
+                and m.dis_user_id = #{userId}
+            </if>
+            <if test="parent_id !=null and parent_id != ''">
+                and m.dis_model_id = #{parent_id}
+            </if>
+        </where>
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+            <otherwise>
+                order by id desc
+            </otherwise>
+        </choose>
+
+    </select>
+
+    <insert id="save" parameterType="com.distribution.modules.dis.entity.DisMemberInfoEntity">
+        insert into distribution.dis_member_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="disPlatformId != null">
+                `dis_platform_id`,
+            </if>
+            <if test="userEntity != null">
+                `dis_user_id`,
+            </if>
+            <if test="disMemberParent != null">
+                `dis_model_id`,
+            </if>
+            <if test="disFullIndex != null">
+                `dis_full_index`,
+            </if>
+            <if test="disUserName != null">
+                `dis_user_name`,
+            </if>
+            <if test="disLevel != null">
+                `dis_level`,
+            </if>
+            <if test="disUserType != null">
+                `dis_user_type`,
+            </if>
+            <if test="disNote != null">
+                `dis_note`,
+            </if>
+            <if test="addTime != null">
+                `add_time`,
+            </if>
+            <if test="updateTime != null">
+                `update_time`,
+            </if>
+            <if test="isDelete != null">
+                `is_delete`
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="disPlatformId != null">
+                #{disPlatformId}
+                ,
+            </if>
+            <if test="userEntity != null">
+                #{userEntity.userId}
+                ,
+            </if>
+            <if test="disMemberParent != null">
+                #{disMemberParent.id}
+                ,
+            </if>
+            <if test="disFullIndex != null">
+                #{disFullIndex}
+                ,
+            </if>
+            <if test="disUserName != null">
+                #{disUserName}
+                ,
+            </if>
+            <if test="disLevel != null">
+                #{disLevel}
+                ,
+            </if>
+            <if test="disUserType != null">
+                #{disUserType}
+                ,
+            </if>
+            <if test="disNote != null">
+                #{disNote}
+                ,
+            </if>
+            <if test="addTime != null">
+                #{addTime}
+                ,
+            </if>
+            <if test="updateTime != null">
+                #{updateTime}
+                ,
+            </if>
+            <if test="isDelete != null">
+                #{isDelete}
+            </if>
+        </trim>
+    </insert>
+
+    <update id="update" parameterType="com.distribution.modules.dis.entity.DisMemberInfoEntity">
+        update distribution.dis_member_info
+        <set>
+            <if test="disPlatformId != null">
+                `dis_platform_id` = #{disPlatformId}
+                ,
+            </if>
+            <if test="userEntity != null">
+                `dis_user_id` = #{userEntity.userId}
+                ,
+            </if>
+            <if test="disMemberParent != null">
+                `dis_model_id` = #{disMemberParent.id}
+                ,
+            </if>
+            <if test="disFullIndex != null">
+                `dis_full_index` = #{disFullIndex}
+                ,
+            </if>
+            <if test="disUserName != null">
+                `dis_user_name` = #{disUserName}
+                ,
+            </if>
+            <if test="disLevel != null">
+                `dis_level` = #{disLevel}
+                ,
+            </if>
+            <if test="disUserType != null">
+                `dis_user_type` = #{disUserType}
+                ,
+            </if>
+            <if test="disNote != null">
+                `dis_note` = #{disNote}
+                ,
+            </if>
+            <if test="addTime != null">
+                `add_time` = #{addTime}
+                ,
+            </if>
+            <if test="updateTime != null">
+                `update_time` = #{updateTime}
+                ,
+            </if>
+            <if test="isDelete != null">
+                `is_delete` = #{isDelete}
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <delete id="delete">
+        delete from distribution.dis_member_info
+        where id = #{value}
+    </delete>
+
+    <delete id="deleteBatch">
+        delete from distribution.dis_member_info where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

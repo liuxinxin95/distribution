@@ -1,0 +1,49 @@
+import java.util.List;
+import java.util.Map;
+
+
+/**
+ * ${comments}
+ *
+ * @author ${author}
+ * @email ${email}
+ * @date ${datetime}
+ */
+public interface ${className}Service {
+    /**
+    * 根据ID查询
+* @return
+*/
+        ${className}Entity queryObject(${pk.attrType} ${pk.lowAttrName});
+
+    /**
+    * 查询列表
+* @param map
+* @return
+*/
+    List<${className}Entity> queryList(Map<String, Object> map);
+
+    /**
+    * 保存
+    * @throws Exception
+    */
+    void save(${className}Entity ${className}) throws Exception;
+
+    /**
+    * 更新
+* @throws Exception
+*/
+    void update(${className}Entity ${className}) throws Exception;
+
+    /**
+    * 删除
+    * @throws Exception
+    */
+    void delete(${pk.attrType} ${pk.lowAttrName}) throws Exception;
+
+    /**
+    * 批量删除
+* @throws Exception
+*/
+    void deleteBatch(${pk.attrType}[]${pk.lowAttrName}s) throws Exception;
+}

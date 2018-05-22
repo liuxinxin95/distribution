@@ -1,0 +1,281 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.distribution.modules.dis.dao.CardOrderInfoDao">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.distribution.modules.dis.entity.CardOrderInfoEntity" id="CardOrderInfoMap">
+        <result property="id" column="id"/>
+        <result property="orderName" column="order_name"/>
+        <result property="orderId" column="order_id"/>
+        <result property="orderMobile" column="order_mobile"/>
+        <result property="orderIdcardno" column="order_idcardno"/>
+        <result property="orderEmail" column="order_email"/>
+        <result property="orderStatus" column="order_status"/>
+        <result property="addTime" column="add_time"/>
+        <result property="updateTime" column="update_time"/>
+        <association property="memberInfo" column="member_id" javaType="com.distribution.modules.dis.entity.DisMemberInfoEntity">
+            <id column="m_id" property="id"/>
+            <result property="disPlatformId" column="dis_platform_id"/>
+            <result property="disFullIndex" column="dis_full_index"/>
+            <result property="disUserName" column="dis_user_name"/>
+            <result property="disLevel" column="dis_level"/>
+            <result property="disUserType" column="dis_user_type"/>
+            <result property="disNote" column="dis_note"/>
+        </association>
+        <association property="cardInfo" column="card_id" javaType="com.distribution.modules.card.entity.CardInfo">
+            <result property="id" column="c_id"/>
+            <result column="bank_num" jdbcType="VARCHAR" property="bankNum"/>
+            <result column="card_num" jdbcType="VARCHAR" property="cardNum"/>
+            <result column="card_name" jdbcType="VARCHAR" property="cardName"/>
+            <result column="card_img" jdbcType="VARCHAR" property="cardImg"/>
+            <result column="card_info" jdbcType="VARCHAR" property="cardInfo"/>
+            <result column="card_url" jdbcType="VARCHAR" property="cardUrl"/>
+        </association>
+    </resultMap>
+
+    <select id="queryObject" resultType="com.distribution.modules.dis.entity.CardOrderInfoEntity">
+        select
+            o.id,
+            order_name,
+            order_id,
+            order_mobile,
+            order_idcardno,
+            order_email,
+            order_status,
+            o.add_time,
+            o.update_time,
+            m.id as "m_id",
+            dis_platform_id,
+            dis_user_id,
+            dis_model_id,
+            dis_full_index,
+            dis_user_name,
+            dis_level,
+            dis_user_type,
+            dis_note,
+            c.id as "c_id",
+            bank_num,
+            card_num,
+            card_name,
+            card_img,
+            card_info,
+            card_url
+        from card_order_info o
+            left join dis_member_info m on o.member_id = m.id
+            left join card_info c on o.card_id = c.id
+        where o.id = #{value}
+    </select>
+
+    <select id="queryList" resultType="com.distribution.modules.dis.entity.CardOrderInfoEntity">
+        select
+        o.id,
+        order_name,
+        order_id,
+        order_mobile,
+        order_idcardno,
+        order_email,
+        order_status,
+        o.add_time,
+        o.update_time,
+        m.id as "m_id",
+        dis_platform_id,
+        dis_user_id,
+        dis_model_id,
+        dis_full_index,
+        dis_user_name,
+        dis_level,
+        dis_user_type,
+        dis_note,
+        c.id as "c_id",
+        bank_num,
+        card_num,
+        card_name,
+        card_img,
+        card_info,
+        card_url
+        from card_order_info o
+        left join dis_member_info m on o.member_id = m.id
+        left join card_info c on o.card_id = c.id
+        <where>
+            <if test="member_id != null">
+                o.member_id = #{member_id}
+            </if>
+            <if test="orderStatus != null and orderStatus != ''">
+                o.order_status = #{orderStatus}
+            </if>
+        </where>
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+            <otherwise>
+                order by o.id desc
+            </otherwise>
+        </choose>
+        <if test="offset != null and limit != null">
+            limit #{offset}, #{limit}
+        </if>
+    </select>
+
+
+
+
+    <insert id="save" parameterType="com.distribution.modules.dis.entity.CardOrderInfoEntity">
+        insert into card_order_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="orderName != null">
+                `order_name`,
+            </if>
+            <if test="orderId != null">
+                `order_id`,
+            </if>
+            <if test="orderMobile != null">
+                `order_mobile`,
+            </if>
+            <if test="orderIdcardno != null">
+                `order_idcardno`,
+            </if>
+            <if test="orderEmail != null">
+                `order_email`,
+            </if>
+            <if test="orderStatus != null">
+                `order_status`,
+            </if>
+            <if test="memberId != null">
+                `member_id`,
+            </if>
+            <if test="cardId != null">
+                `card_id`,
+            </if>
+            <if test="isDelete != null">
+                `is_delete`,
+            </if>
+            <if test="addTime != null">
+                `add_time`,
+            </if>
+            <if test="updateTime != null">
+                `update_time`
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="orderName != null">
+                #{orderName}
+                ,
+            </if>
+            <if test="orderId != null">
+                #{orderId}
+                ,
+            </if>
+            <if test="orderMobile != null">
+                #{orderMobile}
+                ,
+            </if>
+            <if test="orderIdcardno != null">
+                #{orderIdcardno}
+                ,
+            </if>
+            <if test="orderEmail != null">
+                #{orderEmail}
+                ,
+            </if>
+            <if test="orderStatus != null">
+                #{orderStatus}
+                ,
+            </if>
+            <if test="memberId != null">
+                #{memberId}
+                ,
+            </if>
+            <if test="cardId != null">
+                #{cardId}
+                ,
+            </if>
+            <if test="isDelete != null">
+                #{isDelete}
+                ,
+            </if>
+            <if test="addTime != null">
+                #{addTime}
+                ,
+            </if>
+            <if test="updateTime != null">
+                #{updateTime}
+            </if>
+        </trim>
+    </insert>
+
+    <update id="update" parameterType="com.distribution.modules.dis.entity.CardOrderInfoEntity">
+        update card_order_info
+        <set>
+            <if test="orderName != null">
+                `order_name` = #{orderName}
+                ,
+            </if>
+            <if test="orderId != null">
+                `order_id` = #{orderId}
+                ,
+            </if>
+            <if test="orderMobile != null">
+                `order_mobile` = #{orderMobile}
+                ,
+            </if>
+            <if test="orderIdcardno != null">
+                `order_idcardno` = #{orderIdcardno}
+                ,
+            </if>
+            <if test="orderEmail != null">
+                `order_email` = #{orderEmail}
+                ,
+            </if>
+            <if test="orderStatus != null">
+                `order_status` = #{orderStatus}
+                ,
+            </if>
+            <if test="memberId != null">
+                `member_id` = #{memberId}
+                ,
+            </if>
+            <if test="cardId != null">
+                `card_id` = #{cardId}
+                ,
+            </if>
+            <if test="isDelete != null">
+                `is_delete` = #{isDelete}
+                ,
+            </if>
+            <if test="addTime != null">
+                `add_time` = #{addTime}
+                ,
+            </if>
+            <if test="updateTime != null">
+                `update_time` = #{updateTime}
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <delete id="delete">
+        delete from card_order_info
+        where id = #{value}
+    </delete>
+
+    <delete id="deleteBatch">
+        delete from card_order_info where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    <select id="countOrder" resultType="java.lang.Integer">
+        select count(1) from card_order_info o
+        <where>
+            <if test="member_id != null">
+                o.member_id = #{member_id}
+            </if>
+            <if test="orderStatus != null and orderStatus != ''">
+                o.order_status = #{orderStatus}
+            </if>
+        </where>
+    </select>
+
+</mapper>
