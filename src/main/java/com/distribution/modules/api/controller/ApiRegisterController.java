@@ -1,6 +1,7 @@
 package com.distribution.modules.api.controller;
 
 
+import com.alibaba.fastjson.JSONObject;
 import com.distribution.common.utils.CommonUtils;
 import com.distribution.common.utils.Result;
 import com.distribution.modules.api.annotation.AuthIgnore;
@@ -18,7 +19,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.text.MessageFormat;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
@@ -91,8 +91,9 @@ public class ApiRegisterController {
         String captcha = CommonUtils.getRandom();
         //放入Redis缓存,60秒过期
         redisTemplate.opsForValue().set(mobile, captcha, 60, TimeUnit.SECONDS);
-        String msg = MessageFormat.format("【】您的短信验证码为:{0}",captcha);
-        sender.send(msg);
+        JSONObject json = new JSONObject();
+        json.put("code", captcha);
+        sender.send(json.toJSONString());
         return Result.ok().put("captcha", captcha);
     }
 }

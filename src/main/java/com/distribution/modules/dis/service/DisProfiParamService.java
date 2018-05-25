@@ -17,6 +17,7 @@ public interface DisProfiParamService {
     /**
      * 根据ID查询
      *
+     * @param id
      * @return
      */
     DisProfiParam queryObject(String id);
@@ -32,6 +33,7 @@ public interface DisProfiParamService {
     /**
      * 保存
      *
+     * @param disProfiParam
      * @throws Exception
      */
     void save(DisProfiParam disProfiParam) throws Exception;
@@ -39,6 +41,7 @@ public interface DisProfiParamService {
     /**
      * 更新
      *
+     * @param disProfiParam
      * @throws Exception
      */
     void update(DisProfiParam disProfiParam) throws Exception;
@@ -46,6 +49,7 @@ public interface DisProfiParamService {
     /**
      * 删除
      *
+     * @param id
      * @throws Exception
      */
     void delete(String id) throws Exception;
@@ -53,6 +57,7 @@ public interface DisProfiParamService {
     /**
      * 批量删除
      *
+     * @param ids
      * @throws Exception
      */
     void deleteBatch(String[] ids) throws Exception;
